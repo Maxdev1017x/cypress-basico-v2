@@ -8,6 +8,7 @@
 // <reference types="Cypress" />
 
 describe('Central de Atendimento ao Cliente TAT', function() {
+    const THREE_SECONDS_IN_MS = 3000
     beforeEach(function(){
         cy.visit('./src/index.html')
     })
@@ -19,6 +20,9 @@ describe('Central de Atendimento ao Cliente TAT', function() {
 
     it('Preenche os campos obrigatorios e enviar o form', function(){
         const longText = 'Testando, testando, testando, testando, testando, testando, testando, testando, testando, testando, testando, testando, testando,'
+
+        cy.clock()
+
         cy.get('#firstName').type('Max')
         cy.get('#lastName').type('Oliveira')
         cy.get('#email').type('max@exemplo.com')
@@ -26,10 +30,13 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.contains('button','Enviar').click()
 
         cy.get('.success').should('be.visible') //mostra o resultado do teste
+        cy.tick(THREE_SECONDS_IN_MS)
+        cy.get('.success').should('not.be.visible')
     })
 
 
     it('Exibe mensagem de erro ao submeter o form com um e-mail de formatação incorreta', function(){
+        cy.clock()
         cy.get('#firstName').type('Max')
         cy.get('#lastName').type('Oliveira')
         cy.get('#email').type('max@exemplo,com')
@@ -37,6 +44,8 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.contains('button','Enviar').click()
 
         cy.get('.error').should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)
+        cy.get('.error').should('not.be.visible')
     })
 
 
@@ -47,6 +56,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
 
 
     it('Campo telefone se torna obrigatório, mas não foi preenchido antes do envio do form', function(){
+        cy.clock()
         cy.get('#firstName').type('Max')
         cy.get('#lastName').type('Oliveira')
         cy.get('#email').type('max@exemplo,com')
@@ -55,6 +65,8 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.contains('button','Enviar').click()
 
         cy.get('.error').should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)
+        cy.get('.error').should('not.be.visible')
     })
 
 
@@ -67,15 +79,23 @@ describe('Central de Atendimento ao Cliente TAT', function() {
 
 
     it('Exibe mensagem de erro ao submeter form sem preencher campos obrigatórios', function(){
+        cy.clock()
         cy.contains('button','Enviar').click()
+
         cy.get('.error').should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)
+        cy.get('.error').should('not.be.visible')
     })
 
 
 //Comando customizado
     it('Envia o form com um comando customizado', function(){
+        cy.clock()
         cy.fillMandatoryFieldsAndSubmit()
+
         cy.get('.success').should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)
+        cy.get('.success').should('not.be.visible')
     })
 
 
@@ -158,3 +178,4 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.contains('Talking About Testing').should('be.visible')
     })
 });
+
